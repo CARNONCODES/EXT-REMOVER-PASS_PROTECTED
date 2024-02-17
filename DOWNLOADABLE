@@ -1,4 +1,3 @@
-const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -339,14 +338,3 @@ while (scriptState.scriptRunning) {
 
 </body>
 </html>
-`;
-
-const blob = new Blob([htmlContent], { type: 'text/html' });
-
-const a = document.createElement('a');
-a.href = window.URL.createObjectURL(blob);
-a.download = 'enhanced_extension_input.html';
-
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
