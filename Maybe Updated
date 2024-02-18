@@ -45,8 +45,6 @@
             }, 5000);
         }
 
-        // Other optimized button handling functions can be added here...
-
         async function main() {
             let detected = await detect_extensions();
             let buttons_container = from_id("buttons_container")
@@ -72,13 +70,29 @@
             }
         }
 
-        window.onload = main;
+        function downloadHTML() {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = 'dextensify.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        window.onload = () => {
+            main();
+            // Add the following line to call downloadHTML() when needed
+            // downloadHTML();
+        };
     </script>
 </head>
 
 <body data-new-gr-c-s-check-loaded="8.908.0" data-gr-ext-installed="">
     <div id="main_div">
         <!-- Your existing HTML content here... -->
+        <button onclick="downloadHTML()">Download HTML</button>
     </div>
 </body>
 
